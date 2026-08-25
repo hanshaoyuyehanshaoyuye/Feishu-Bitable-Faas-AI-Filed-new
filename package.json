@@ -1,0 +1,29 @@
+{
+  "name": "feishu-bitable-ai-field",
+  "version": "0.1.0",
+  "description": "飞书多维表格 AI 自定义字段（增强版）— 支持 7 种输出类型、结构化输出、OneAPI 对接",
+  "main": "index.js",
+  "scripts": {
+    "start": "block-basekit-cli start:field",
+    "build": "block-basekit-cli build:field",
+    "pack": "block-basekit-cli pack:field",
+    "dev": "block-basekit-cli dev:field"
+  },
+  "author": "Ayus",
+  "license": "MIT",
+  "devDependencies": {
+    "@lark-opdev/block-basekit-cli": "1.0.4-alpha.26"
+  },
+  "dependencies": {
+    "@lark-base-open/node-sdk": "^1.0.1",
+    "@lark-opdev/block-basekit-server-api": "^1.0.4-alpha.25"
+  },
+  "keywords": [
+    "feishu",
+    "bitable",
+    "ai",
+    "lark",
+    "custom-field",
+    "faas"
+  ]
+}
