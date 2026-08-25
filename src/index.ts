@@ -13,11 +13,12 @@
 
 import {
   basekit,
-  field,
   FieldComponent,
   FieldType,
   FieldCode,
 } from '@lark-opdev/block-basekit-server-api';
+
+import type { FieldContext } from '@lark-opdev/block-basekit-server-api';
 
 import { ALLOWED_DOMAINS } from './config/domains';
 import { validateAndResolve } from './core/validator';
@@ -42,7 +43,7 @@ basekit.addField({
     {
       key: 'outputType',
       label: '输出类型',
-      component: FieldComponent.Select,
+      component: FieldComponent.SingleSelect,
       props: {
         options: [
           { label: '文本（总结/翻译/生成）', value: 'text' },
@@ -125,12 +126,16 @@ basekit.addField({
     },
   ],
 
+  // 字段输出类型：统一使用 Text，value 为文本形式
+  // （飞书 FaaS 字段的 resultType 在注册时固定，无法按行动态切换）
+  // 若要显示不同类型的值，统一序列化为字符串展示
   resultType: { type: FieldType.Text },
 
   // ============================================================
   // execute：主流程
   // ============================================================
-  execute: async (formItemParams: FieldConfig, context: FaasContext) => {
+  execute: async (params: { [key: string]: any }, context: FieldContext) => {
+    const formItemParams = params as unknown as FieldConfig;
     const logger = createLogger(context.logID);
 
     // 1. 校验 + 解析配置
@@ -162,12 +167,12 @@ basekit.addField({
       cfg.maxTokens,
     );
 
-    // 4. 调用 AI API
+    // 4. 调用 AI API（context 类型兼容：FieldContext 包含 FaasContext 需要的全部字段）
     const apiResult = await callChatCompletion(
       cfg.apiUrl,
       cfg.apiKey,
       requestBody,
-      context,
+      context as unknown as FaasContext,
     );
 
     if (!apiResult.success || apiResult.content === undefined) {
@@ -194,9 +199,24 @@ basekit.addField({
     }
 
     logger.info('success');
+
+    // resultType 是 Text，统一转为字符串展示
+    let displayValue: string;
+    if (typeof parsed.data === 'string') {
+      displayValue = parsed.data;
+    } else if (typeof parsed.data === 'number') {
+      displayValue = String(parsed.data);
+    } else if (Array.isArray(parsed.data)) {
+      displayValue = parsed.data.join(', ');
+    } else if (parsed.data && typeof parsed.data === 'object') {
+      displayValue = JSON.stringify(parsed.data, null, 2);
+    } else {
+      displayValue = '';
+    }
+
     return {
       code: FieldCode.Success,
-      data: parsed.data,
+      data: displayValue,
     };
   },
 });

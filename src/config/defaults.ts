@@ -1,6 +1,8 @@
 /**
  * 默认值常量
  */
+import { FieldType } from '@lark-opdev/block-basekit-server-api';
+import type { OutputType } from '../types';
 
 export const DEFAULTS = {
   /** 默认 API 地址（硅基流动，国内访问快） */
@@ -23,12 +25,15 @@ export const DEFAULTS = {
   MAX_TOKENS_HARD_LIMIT: 8000,
 } as const;
 
-/** 输出类型对应的飞书 FieldType 值 */
-export const OUTPUT_TYPE_TO_FIELD_TYPE = {
-  text: 1,
-  number: 2,
-  single_select: 3,
-  multi_select: 4,
-  datetime: 5,
-  object: 6,
-} as const;
+/**
+ * 输出类型 → 飞书 FieldType 枚举值
+ * 注意：这些是 SDK 中 FieldType 枚举的实际数值
+ */
+export const OUTPUT_TYPE_TO_FIELD_TYPE: Record<OutputType, FieldType> = {
+  text: FieldType.Text,
+  number: FieldType.Number,
+  single_select: FieldType.SingleSelect,
+  multi_select: FieldType.MultiSelect,
+  datetime: FieldType.DateTime,
+  object: FieldType.Object,
+};

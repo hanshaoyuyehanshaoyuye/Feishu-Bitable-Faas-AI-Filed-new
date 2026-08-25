@@ -12,7 +12,9 @@
   "author": "Ayus",
   "license": "MIT",
   "devDependencies": {
-    "@lark-opdev/block-basekit-cli": "1.0.4-alpha.26"
+    "@lark-opdev/block-basekit-cli": "1.0.4-alpha.26",
+    "@types/node": "^26.3.0",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
     "@lark-base-open/node-sdk": "^1.0.1",

@@ -42,7 +42,7 @@ export function validateAndResolve(cfg: Partial<FieldConfig>): ValidationResult 
   const modelId = cfg.modelId?.trim() || DEFAULTS.MODEL_ID;
 
   // temperature
-  let temperature = DEFAULTS.TEMPERATURE;
+  let temperature: number = DEFAULTS.TEMPERATURE;
   if (cfg.temperature?.trim()) {
     const t = parseFloat(cfg.temperature);
     if (isNaN(t)) {

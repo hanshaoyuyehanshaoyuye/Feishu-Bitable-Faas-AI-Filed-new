@@ -90,9 +90,11 @@ export interface ParseResult {
   errorMsg?: string;
 }
 
-/** FaaS 执行上下文（飞书注入） */
+/** FaaS 执行上下文（飞书注入的 FieldContext 子集，我们只用这些字段） */
 export interface FaasContext {
-  fetch: typeof fetch;
+  fetch: (url: RequestInfo, init?: RequestInit) => Promise<Response>;
   logID: string;
-  // 按需扩展
+  baseID?: string;
+  tableID?: string;
+  tenantKey?: string;
 }

@@ -7,6 +7,7 @@
 import type {
   ChatCompletionRequest,
   ChatCompletionResponse,
+  ChatMessage,
   FaasContext,
 } from '../types';
 
@@ -96,7 +97,7 @@ export async function callChatCompletion(
 /** 构造 API 请求体 */
 export function buildRequestBody(
   model: string,
-  messages: Array<{ role: string; content: string }>,
+  messages: ChatMessage[],
   temperature: number,
   maxTokens: number | null,
 ): ChatCompletionRequest {
