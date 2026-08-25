@@ -8,8 +8,8 @@
     "build": "block-basekit-cli build:field",
     "pack": "block-basekit-cli pack:field",
     "dev": "block-basekit-cli dev:field",
-    "test": "tsc && node --test \"dist/test/**/*.test.js\"",
-    "typecheck": "tsc --noEmit"
+    "test": "tsc -p tsconfig.test.json && node --test \"dist/test/**/*.test.js\"",
+    "typecheck": "tsc -p tsconfig.test.json --noEmit"
   },
   "author": "Ayus",
   "license": "MIT",
