@@ -9,8 +9,12 @@
 import type { OutputTypeHandler, ParseResult } from '../types';
 
 function parseDirect(s: string): Date | null {
-  const ts = Date.parse(s);
-  if (!isNaN(ts)) return new Date(ts);
+  // 只接受明确带时区或 ISO 8601 完整格式的字符串
+  // 避免本地时区导致的日期偏移
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(s)) {
+    const ts = Date.parse(s);
+    if (!isNaN(ts)) return new Date(ts);
+  }
   return null;
 }
 

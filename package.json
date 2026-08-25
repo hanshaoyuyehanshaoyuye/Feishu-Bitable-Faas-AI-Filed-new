@@ -7,7 +7,9 @@
     "start": "block-basekit-cli start:field",
     "build": "block-basekit-cli build:field",
     "pack": "block-basekit-cli pack:field",
-    "dev": "block-basekit-cli dev:field"
+    "dev": "block-basekit-cli dev:field",
+    "test": "tsc && node --test \"dist/test/**/*.test.js\"",
+    "typecheck": "tsc --noEmit"
   },
   "author": "Ayus",
   "license": "MIT",
