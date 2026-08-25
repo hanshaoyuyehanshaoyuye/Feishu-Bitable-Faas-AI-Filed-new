@@ -22,6 +22,8 @@ export interface FieldConfig {
   temperature?: string;
   maxTokens?: string;
   selectOptions?: string;
+  maxPerMinute?: string;
+  maxPerDay?: string;
 }
 
 /** 解析后的有效配置 */
@@ -35,6 +37,8 @@ export interface ResolvedConfig {
   systemPrompt: string;
   userPrompt: string;
   selectOptions: string[];
+  maxPerMinute: number;
+  maxPerDay: number;
 }
 
 /** Chat message */

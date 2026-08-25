@@ -70,6 +70,26 @@ export function validateAndResolve(cfg: Partial<FieldConfig>): ValidationResult 
   // 候选项
   const selectOptions = parseSelectOptions(cfg.selectOptions);
 
+  // 速率限制（每分钟）
+  let maxPerMinute = 0;
+  if (cfg.maxPerMinute?.trim()) {
+    const n = parseInt(cfg.maxPerMinute, 10);
+    if (isNaN(n) || n < 0) {
+      return { ok: false, errorMsg: '每分钟限额必须是非负整数' };
+    }
+    maxPerMinute = n;
+  }
+
+  // 每日配额
+  let maxPerDay = 0;
+  if (cfg.maxPerDay?.trim()) {
+    const n = parseInt(cfg.maxPerDay, 10);
+    if (isNaN(n) || n < 0) {
+      return { ok: false, errorMsg: '每日配额必须是非负整数' };
+    }
+    maxPerDay = n;
+  }
+
   return {
     ok: true,
     config: {
@@ -82,6 +102,8 @@ export function validateAndResolve(cfg: Partial<FieldConfig>): ValidationResult 
       systemPrompt: cfg.systemPrompt?.trim() || '',
       userPrompt: cfg.userPromptTemplate.trim(),
       selectOptions,
+      maxPerMinute,
+      maxPerDay,
     },
   };
 }

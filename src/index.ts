@@ -25,6 +25,7 @@ import { validateAndResolve } from './core/validator';
 import { buildMessages } from './core/prompt-builder';
 import { callChatCompletion, buildRequestBody } from './core/api-client';
 import { parseOutput } from './core/output-parser';
+import { checkAndConsumeQuota } from './core/quota';
 import { createLogger } from './utils/logger';
 
 import type { FaasContext, FieldConfig } from './types';
@@ -124,6 +125,20 @@ basekit.addField({
         rows: 3,
       },
     },
+
+    // --- 安全配额 ---
+    {
+      key: 'maxPerMinute',
+      label: '每分钟限额（选填）',
+      component: FieldComponent.Input,
+      props: { placeholder: '默认不限制，建议：10' },
+    },
+    {
+      key: 'maxPerDay',
+      label: '每日配额（选填）',
+      component: FieldComponent.Input,
+      props: { placeholder: '默认不限制，建议：100。防止账单爆炸' },
+    },
   ],
 
   // 字段输出类型：统一使用 Text，value 为文本形式
@@ -150,6 +165,24 @@ basekit.addField({
 
     const cfg = validation.config;
     logger.info(`output=${cfg.outputType}, model=${cfg.modelId}`);
+
+    // 1.5 配额检查（基于 tenantKey）
+    if (cfg.maxPerMinute > 0 || cfg.maxPerDay > 0) {
+      const quotaResult = checkAndConsumeQuota(context.tenantKey, {
+        maxPerMinute: cfg.maxPerMinute,
+        maxPerDay: cfg.maxPerDay,
+      });
+      if (!quotaResult.allowed) {
+        const msg = quotaResult.reason === 'rate_limit'
+          ? '已达每分钟请求上限，请稍后再试'
+          : '今日配额已用完，请明天再试';
+        logger.warn(`quota exceeded: ${quotaResult.reason}`);
+        return {
+          code: FieldCode.QuotaExhausted,
+          msg,
+        };
+      }
+    }
 
     // 2. 构造消息
     const messages = buildMessages(
